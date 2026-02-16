@@ -71,6 +71,7 @@ TOOLS_TO_RUN_FUNCTION = {
     "prediction-url-cot-claude": prediction_url_cot_run,
     "superforcaster": superforcaster_run,
     "resolve-market-reasoning-gpt-4.1": resolve_market_reasoning_run,
+    "resolve-market-reasoning-gpt-5.2": resolve_market_reasoning_run,
 }
 
 TOOLS_TO_TEST = [
@@ -83,11 +84,13 @@ TOOLS_TO_TEST = [
     "prediction-request-reasoning",
     "prediction-request-reasoning-claude",
     "resolve-market-reasoning-gpt-4.1",
+    "resolve-market-reasoning-gpt-5.2",
     "prediction-url-cot",
     "prediction-url-cot-claude",
 ]
 
-MODEL_GPT = "gpt-4.1-2025-04-14"
+MODEL_GPT_4_1 = "gpt-4.1-2025-04-14"
+MODEL_GPT_5_2 = "gpt-5.2-mini"
 MODEL_CLAUDE = "claude-3-5-sonnet-20240620"
 
 MARKETS = [
@@ -223,7 +226,12 @@ def main() -> None:
     """Test the prediction request tool."""
 
     for tool in TOOLS_TO_TEST:
-        model = MODEL_GPT if "cot" not in tool else MODEL_CLAUDE
+        if "cot" in tool:
+            model = MODEL_CLAUDE
+        elif "gpt-5.2" in tool:
+            model = MODEL_GPT_5_2
+        else:
+            model = MODEL_GPT_4_1
         for market, prompt in zip(MARKETS, PROMPTS):
             print(f"Testing tool: {tool} with model: {model}")
             start_time = timer()

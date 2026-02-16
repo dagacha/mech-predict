@@ -85,7 +85,7 @@ You may customize the agent's behaviour by setting these environment variables.
 
 | Name                       | Type   | Sample Value                                                                                                                                                                                                                                                        | Description                                                            |
 | -------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| `TOOLS_TO_PACKAGE_HASH`    | `dict` | `{"openai-gpt-4.1-2025-04-14":"bafybeigz5brshryms5awq5zscxsxibjymdofm55dw5o6ud7gtwmodm3vmq","prediction-online":"bafybeihy7yv6nbvavnwgyqxmvxf5uzam773fv6lxngvyaxsrkmkwchr7bq"}` | Tracks services for each tool packages.                                |
+| `TOOLS_TO_PACKAGE_HASH`    | `dict` | `{"openai-gpt-4.1-2025-04-14":"bafybeigz5brshryms5awq5zscxsxibjymdofm55dw5o6ud7gtwmodm3vmq","openai-gpt-5.2-mini":"bafybeigz5brshryms5awq5zscxsxibjymdofm55dw5o6ud7gtwmodm3vmq","prediction-online":"bafybeihy7yv6nbvavnwgyqxmvxf5uzam773fv6lxngvyaxsrkmkwchr7bq"}` | Tracks services for each tool packages.                                |
 | `API_KEYS`                 | `dict` | `{"openai":["dummy_api_key"], "google_api_key":["dummy_api_key"]}`                                                                                                                                                                                                      | Tracks API keys for each service.                                      |
 | `SERVICE_REGISTRY_ADDRESS` | `str`  | `"0x9338b5153AE39BB89f50468E608eD9d764B755fD"`                                                                                                                                                                                                                      | Smart contract which registers the services.                           |
 | `COMPLEMENTARY_SERVICE_METADATA_ADDRESS`   | `str`  | `"0x0598081D48FB80B0A7E52FAD2905AE9beCd6fC69"`                                                                                                                                                                                                                      | Smart contract which tracks metadata hash of the mech.                             |
@@ -184,6 +184,7 @@ Now, you have two options to run the worker: as a standalone agent or as a servi
 
 - **OpenAI request** (`openai_request.py`). Executes requests to the OpenAI API through the engine associated with the specific tool. It receives as input an arbitrary prompt and outputs the returned output by the OpenAI API.
   - `openai-gpt-4.1-2025-04-14`
+  - `openai-gpt-5.2-mini`
 
 - **DALL-E request** (`dalle_request.py`): Generates images from text prompts using OpenAI image models.
   - `dall-e-2`

@@ -364,9 +364,9 @@ class ExtendedDocument(BaseModel):
 
 def get_model_encoding(model: str) -> Encoding:
     """Get the appropriate encoding for a model."""
-    # Workaround since tiktoken does not have support yet for gpt4.1
+    # Workaround since tiktoken does not have support yet for some newer models.
     # https://github.com/openai/tiktoken/issues/395
-    if model == "gpt-4.1-2025-04-14":
+    if model in {"gpt-4.1-2025-04-14", "gpt-5.2-mini"}:
         return get_encoding("o200k_base")
 
     return encoding_for_model(model)

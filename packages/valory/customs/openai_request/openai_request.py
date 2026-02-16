@@ -126,8 +126,8 @@ DEFAULT_OPENAI_SETTINGS = {
 }
 PREFIX = "openai-"
 ENGINES = {
-    "chat": ["gpt-4.1-2025-04-14"],
-    "completion": ["gpt-4.1-2025-04-14"],
+    "chat": ["gpt-4.1-2025-04-14", "gpt-5.2-mini"],
+    "completion": ["gpt-4.1-2025-04-14", "gpt-5.2-mini"],
 }
 ALLOWED_TOOLS = [PREFIX + value for values in ENGINES.values() for value in values]
 

@@ -291,6 +291,11 @@ LLM_SETTINGS = {
         "limit_max_tokens": 1_047_576,
         "temperature": 0,
     },
+    "gpt-5.2-mini": {
+        "default_max_tokens": 4096,
+        "limit_max_tokens": 1_047_576,
+        "temperature": 0,
+    },
     "claude-3-haiku-20240307": {
         "default_max_tokens": 1000,
         "limit_max_tokens": 200_000,
@@ -448,9 +453,9 @@ def count_tokens(text: str, model: str) -> int:
             print("Using fallback enconding for Claude models")
             enc = get_encoding("cl100k_base")
             return len(enc.encode(text))
-    # Workaround since tiktoken does not have support yet for gpt4.1
+    # Workaround since tiktoken does not have support yet for some newer models.
     # https://github.com/openai/tiktoken/issues/395
-    if model == "gpt-4.1-2025-04-14":
+    if model in {"gpt-4.1-2025-04-14", "gpt-5.2-mini"}:
         enc = get_encoding("o200k_base")
     else:
         enc = encoding_for_model(model)
