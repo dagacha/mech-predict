@@ -89,8 +89,8 @@ TOOLS_TO_TEST = [
     "prediction-url-cot-claude",
 ]
 
+MODEL_GPT_DEFAULT = "gpt-5.2-mini"
 MODEL_GPT_4_1 = "gpt-4.1-2025-04-14"
-MODEL_GPT_5_2 = "gpt-5.2-mini"
 MODEL_CLAUDE = "claude-3-5-sonnet-20240620"
 
 MARKETS = [
@@ -229,9 +229,9 @@ def main() -> None:
         if "cot" in tool:
             model = MODEL_CLAUDE
         elif "gpt-5.2" in tool:
-            model = MODEL_GPT_5_2
+            model = MODEL_GPT_DEFAULT
         else:
-            model = MODEL_GPT_4_1
+            model = MODEL_GPT_DEFAULT
         for market, prompt in zip(MARKETS, PROMPTS):
             print(f"Testing tool: {tool} with model: {model}")
             start_time = timer()

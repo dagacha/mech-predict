@@ -169,7 +169,7 @@ DEFAULT_OPENAI_SETTINGS = {
     "limit_max_tokens": 4096,
     "temperature": 0,
 }
-DEFAULT_OPENAI_MODEL = "gpt-4.1-2025-04-14"
+DEFAULT_OPENAI_MODEL = "gpt-5.2-mini"
 ALLOWED_TOOLS = ["superforcaster"]
 ALLOWED_MODELS = [DEFAULT_OPENAI_MODEL, "gpt-5.2-mini"]
 COMPLETION_RETRIES = 3

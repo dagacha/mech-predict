@@ -602,7 +602,7 @@ def get_urls_from_queries_serper(
 def get_dates(
     client_: OpenAI,
     text: str,
-    model: str = "gpt-4.1-2025-04-14",
+    model: str = "gpt-5.2-mini",
     counter_callback: Optional[Callable] = None,
 ) -> Tuple[str, Optional[Callable]]:
     """Get the date from the extracted text"""
