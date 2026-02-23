@@ -303,12 +303,12 @@ LLM_SETTINGS = {
     },
     "gpt-4.1-2025-04-14": {
         "default_max_tokens": 4096,
-        "limit_max_tokens": 1_047_576,
+        "limit_max_tokens": 32_768,
         "temperature": 0,
     },
     "gpt-5.2-mini": {
         "default_max_tokens": 4096,
-        "limit_max_tokens": 1_047_576,
+        "limit_max_tokens": 32_768,
         "temperature": 0,
     },
     "claude-3-haiku-20240307": {
@@ -1226,6 +1226,9 @@ def run(**kwargs: Any) -> Union[MaxCostResponse, MechResponse]:
     with LLMClientManager(kwargs["api_keys"], model, embedding_provider="openai"):
         prompt = extract_question(kwargs["prompt"])
         max_tokens = kwargs.get("max_tokens", LLM_SETTINGS[model]["default_max_tokens"])
+        max_tokens = min(
+            max(1, int(max_tokens)), LLM_SETTINGS[model]["limit_max_tokens"]
+        )
         temperature = kwargs.get("temperature", LLM_SETTINGS[model]["temperature"])
         num_urls = kwargs.get("num_urls", DEFAULT_NUM_URLS)
         num_queries = kwargs.get("num_queries", DEFAULT_NUM_QUERIES)
