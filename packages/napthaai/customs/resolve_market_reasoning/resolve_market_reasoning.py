@@ -62,9 +62,9 @@ MaxCostResponse = float
 
 def get_model_encoding(model: str) -> Encoding:
     """Get the appropriate encoding for a model."""
-    # Workaround since tiktoken does not have support yet for gpt4.1
+    # Workaround since tiktoken does not have support yet for some newer models.
     # https://github.com/openai/tiktoken/issues/395
-    if model == "gpt-4.1-2025-04-14":
+    if model in {"gpt-4.1-2025-04-14", "gpt-5.2-mini"}:
         return get_encoding("o200k_base")
     return encoding_for_model(model)
 
@@ -206,16 +206,26 @@ OPEN_AI_SETTINGS = {
         "max_tokens": 32_768,
         "temperature": 0,
     },
+    "gpt-5.2-mini": {
+        """
+        Error code: 400 - {'error': {'message': 'max_tokens is too large: 1047576. This model supports at most 32768 completion tokens, whereas you provided 1047576.', 'type': 'invalid_request_error', 'param': 'max_tokens', 'code': 'invalid_value'}}
+        """
+        "max_tokens": 32_768,
+        "temperature": 0,
+    },
 }
 MAX_TOKENS = {
     "gpt-4o-2024-08-06": 4096,
     "gpt-4.1-2025-04-14": 4096,
+    "gpt-5.2-mini": 4096,
 }
 ALLOWED_TOOLS = [
     "resolve-market-reasoning-gpt-4.1",
+    "resolve-market-reasoning-gpt-5.2",
 ]
 TOOL_TO_ENGINE = {
     "resolve-market-reasoning-gpt-4.1": "gpt-4.1-2025-04-14",
+    "resolve-market-reasoning-gpt-5.2": "gpt-5.2-mini",
 }
 DEFAULT_NUM_WORDS: Dict[str, Optional[int]] = defaultdict(lambda: 300)
 NUM_QUERIES = 3
@@ -592,11 +602,12 @@ def get_urls_from_queries_serper(
 def get_dates(
     client_: OpenAI,
     text: str,
+    model: str = "gpt-5.2-mini",
     counter_callback: Optional[Callable] = None,
 ) -> Tuple[str, Optional[Callable]]:
     """Get the date from the extracted text"""
     adjusted_text = adjust_additional_information(
-        prompt=GET_DATE_PROMPT, additional_information=text, model="gpt-4.1-2025-04-14"
+        prompt=GET_DATE_PROMPT, additional_information=text, model=model
     )
     get_date_prompt = GET_DATE_PROMPT.format(extracted_text=adjusted_text)
     messages = [
@@ -604,7 +615,7 @@ def get_dates(
         {"role": "user", "content": get_date_prompt},
     ]
     response = client_.chat.completions.create(
-        model="gpt-4.1-2025-04-14",
+        model=model,
         messages=messages,
         temperature=0,
         n=1,
@@ -619,7 +630,7 @@ def get_dates(
             counter_callback(
                 input_tokens=response.usage.prompt_tokens,
                 output_tokens=response.usage.completion_tokens,
-                model="gpt-4.1-2025-04-14",
+                model=model,
                 token_counter=count_tokens,
             )
             return f"{date.year}-{date.month}-{date.day}", counter_callback
@@ -655,6 +666,7 @@ def extract_text_from_pdf(
 def extract_text(
     client_: OpenAI,
     html: str,
+    model: str,
     num_words: Optional[int] = None,
     counter_callback: Optional[Callable[[int, int, str], None]] = None,
 ) -> Tuple[Document, Optional[Callable]]:
@@ -662,7 +674,7 @@ def extract_text(
     text = ReadabilityDocument(html).summary()
     text = text = md(text, heading_style="ATX")
     date, counter_callback = get_dates(
-        client_=client_, text=text, counter_callback=counter_callback
+        client_=client_, text=text, model=model, counter_callback=counter_callback
     )
     doc = Document(text=text[:num_words] if num_words else text, date=date, url="")
     return doc, counter_callback
@@ -671,6 +683,7 @@ def extract_text(
 def extract_texts(
     urls: List[str],
     client_: OpenAI,
+    model: str,
     counter_callback: Optional[Callable] = None,
 ) -> Tuple[List[Document], Optional[Callable]]:
     """Extract texts from URLs"""
@@ -700,6 +713,7 @@ def extract_texts(
                 doc, counter_callback = extract_text(
                     html=result.text,
                     client_=client_,
+                    model=model,
                     counter_callback=counter_callback,
                 )
                 doc.url = url
@@ -872,7 +886,7 @@ def fetch_additional_information(
 
     # Extract text and dates from the URLs
     docs, counter_callback = extract_texts(
-        urls=urls, client_=client_, counter_callback=counter_callback
+        urls=urls, client_=client_, model=engine, counter_callback=counter_callback
     )
 
     # Remove None values from the list

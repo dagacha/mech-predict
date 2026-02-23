@@ -32,7 +32,7 @@ load_dotenv(override=True)
 
 
 TOOL = "prediction-online"
-MODEL = "gpt-4.1-2025-04-14"
+MODEL = "gpt-5.2-mini"
 PROMPT = """
 With the given question
 

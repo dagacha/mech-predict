@@ -70,9 +70,9 @@ class OpenAIClientManager:
 
 def count_tokens(text: str, model: str) -> int:
     """Count the number of tokens in a text."""
-    # Workaround since tiktoken does not have support yet for gpt4.1
+    # Workaround since tiktoken does not have support yet for some newer models.
     # https://github.com/openai/tiktoken/issues/395
-    if model == "gpt-4.1-2025-04-14":
+    if model in {"gpt-4.1-2025-04-14", "gpt-5.2-mini"}:
         enc = tiktoken.get_encoding("o200k_base")
     else:
         enc = encoding_for_model(model)
@@ -90,6 +90,7 @@ MAX_TOKENS = {
     "gpt-4-0125-preview": 8192,
     "gpt-4o-2024-08-06": 4096,
     "gpt-4.1-2025-04-14": 4096,
+    "gpt-5.2-mini": 4096,
 }
 ALLOWED_TOOLS = [
     "prediction-offline-sme",

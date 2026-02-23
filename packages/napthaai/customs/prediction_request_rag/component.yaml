@@ -12,7 +12,7 @@ fingerprint_ignore_patterns: []
 entry_point: prediction_request_rag.py
 callable: run
 params:
-  default_model: gpt-4.1-2025-04-14
+  default_model: gpt-5.2-mini
 dependencies:
   google-api-python-client:
     version: ==2.95.0

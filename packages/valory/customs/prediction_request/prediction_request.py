@@ -343,9 +343,9 @@ def count_tokens(text: str, model: str) -> int:
         # Fallback encoding
         enc = get_encoding("cl100k_base")
         return len(enc.encode(text))
-    # Workaround since tiktoken does not have support yet for gpt4.1
+    # Workaround since tiktoken does not have support yet for some newer models.
     # https://github.com/openai/tiktoken/issues/395
-    if model == "gpt-4.1-2025-04-14":
+    if model in {"gpt-4.1-2025-04-14", "gpt-5.2-mini"}:
         enc = get_encoding("o200k_base")
     else:
         enc = encoding_for_model(model)
@@ -374,7 +374,12 @@ LLM_SETTINGS = {
     },
     "gpt-4.1-2025-04-14": {
         "default_max_tokens": 4096,
-        "limit_max_tokens": 1_047_576,
+        "limit_max_tokens": 32_768,
+        "temperature": 0,
+    },
+    "gpt-5.2-mini": {
+        "default_max_tokens": 4096,
+        "limit_max_tokens": 32_768,
         "temperature": 0,
     },
     "claude-3-haiku-20240307": {
@@ -1054,6 +1059,9 @@ def run(**kwargs: Any) -> Union[MaxCostResponse, MechResponse]:
         user_prompt = kwargs["prompt"]  # question
         max_tokens = kwargs.get(
             "max_tokens", LLM_SETTINGS[engine]["default_max_tokens"]
+        )
+        max_tokens = min(
+            max(1, int(max_tokens)), LLM_SETTINGS[engine]["limit_max_tokens"]
         )
         temperature = kwargs.get("temperature", LLM_SETTINGS[engine]["temperature"])
         num_urls = kwargs.get("num_urls", DEFAULT_NUM_URLS[tool])

@@ -169,9 +169,9 @@ DEFAULT_OPENAI_SETTINGS = {
     "limit_max_tokens": 4096,
     "temperature": 0,
 }
-DEFAULT_OPENAI_MODEL = "gpt-4.1-2025-04-14"
+DEFAULT_OPENAI_MODEL = "gpt-5.2-mini"
 ALLOWED_TOOLS = ["superforcaster"]
-ALLOWED_MODELS = [DEFAULT_OPENAI_MODEL]
+ALLOWED_MODELS = [DEFAULT_OPENAI_MODEL, "gpt-5.2-mini"]
 COMPLETION_RETRIES = 3
 COMPLETION_DELAY = 2
 
@@ -369,6 +369,8 @@ def run(**kwargs: Any) -> Union[MaxCostResponse, MechResponse]:
     model = kwargs.get("model")
     if model is None:
         raise ValueError("Model not supplied.")
+    if model not in ALLOWED_MODELS:
+        raise ValueError(f"Model {model} is not supported.")
 
     delivery_rate = int(kwargs.get("delivery_rate", DEFAULT_DELIVERY_RATE))
     counter_callback: Optional[Callable[..., Any]] = kwargs.get(
